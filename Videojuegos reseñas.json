@@ -1,0 +1,600 @@
+{
+  "name": "Videojuegos reseñas",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        272
+      ],
+      "id": "49917dc2-ff9b-4ebd-baa5-15a26b8a96a8",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "982be19b-23a9-4249-9cad-03d09b623448",
+              "name": "busqueda",
+              "value": "Fornite",
+              "type": "string"
+            },
+            {
+              "id": "29359a50-3a10-4f06-9283-239587e06516",
+              "name": "min_rating",
+              "value": 2,
+              "type": "number"
+            },
+            {
+              "id": "8126a525-414b-4ee1-a53d-432f5f9a0b50",
+              "name": "id",
+              "value": "={{$json.id}}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -48,
+        176
+      ],
+      "id": "1c99bee6-2bab-45cd-be82-5c3fead9ee21",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        272
+      ],
+      "id": "de8a35ed-67a2-4bba-8cb1-f5dcab4ccf93",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.rawg.io/api/games?key=9cef0584cf4c4c728757eff061c8caa0&search={{$json.busqueda}}&page_size=5",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        176,
+        176
+      ],
+      "id": "269eb6b2-4591-4d50-83c1-6509f436f01d",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1OtET6tFfNgs5H2sDKm6GarrHHRkenRymeK_nvTePe3Y",
+          "mode": "list",
+          "cachedResultName": "n8n trabajo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1OtET6tFfNgs5H2sDKm6GarrHHRkenRymeK_nvTePe3Y/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1OtET6tFfNgs5H2sDKm6GarrHHRkenRymeK_nvTePe3Y/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nombre": "={{ $('If').item.json.nombre }}",
+            "Rating": "={{ $('If').item.json.rating }}",
+            "Descripcion": "={{ $('Edit Fields1').item.json.descripcion }}",
+            "Decision": "={{ $('Edit Fields1').item.json.decision }}",
+            "Motivo": "={{ $json.motivo }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Rating",
+              "displayName": "Rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Descripcion",
+              "displayName": "Descripcion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Decision",
+              "displayName": "Decision",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Motivo",
+              "displayName": "Motivo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2448,
+        -16
+      ],
+      "id": "e9173c93-7f52-42ca-a9d1-04767fc79aab",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "c6NvMET0nNUcQ3C3",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3590e334-fc0b-49ca-af79-c1d3cf771c4f",
+              "leftValue": "={{$json.rating}}",
+              "rightValue": "={{ $('HTTP Request').item.json.results[0].rating }}",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1072,
+        176
+      ],
+      "id": "adc98d57-0602-41dd-8ed1-fddf4b94ddd0",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $json.results.map(game => {\n  return {\n    id: game.id,\n    nombre: game.name,\n    rating: game.rating\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        176
+      ],
+      "id": "ab7a5da2-2fb0-448d-b5db-bec6ae44d64f",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Analiza este videojuego y responde ÚNICAMENTE con un JSON válido.\n\nFormato exacto:\n{\n  \"decision\": \"SI o NO\",\n  \"motivo\": \"Breve explicación\"\n}\n\nJuego: {{ $('If').item.json.nombre }}\nRating: {{ $('If').item.json.rating }}\nDescripcion: {{ $json.output[0].content[0].text }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        1648,
+        80
+      ],
+      "id": "da19a536-846f-44de-8dfb-388f979d0ed4",
+      "name": "Desicion",
+      "credentials": {
+        "openAiApi": {
+          "id": "iIqKIwxLjsUMOdBt",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Dame una descripción breve en una sola frase del videojuego:\n{{$json.nombre}}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        1296,
+        80
+      ],
+      "id": "88708f14-adef-4cea-a80b-b04209cf1c82",
+      "name": "Descripcion",
+      "credentials": {
+        "openAiApi": {
+          "id": "iIqKIwxLjsUMOdBt",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e7fba3cd-f872-4619-b905-232522f51775",
+              "leftValue": "={{($json.decision || \"\").toLowerCase()}}",
+              "rightValue": "si",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2224,
+        80
+      ],
+      "id": "1996786b-0d07-41e1-8af9-f55cfdbc6d46",
+      "name": "If1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2448,
+        176
+      ],
+      "id": "198ce4c7-2dce-4a4c-8e72-7587b63065a6",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fddf52f8-2a26-4c43-95c1-886c358396de",
+              "name": "nombre",
+              "value": "={{ $('If').item.json.nombre }}",
+              "type": "string"
+            },
+            {
+              "id": "f2ccd19d-d7b1-4cba-98b8-8c5aa62e7989",
+              "name": "rating",
+              "value": "={{ $('If').item.json.rating }}",
+              "type": "number"
+            },
+            {
+              "id": "61d68d77-6780-4f83-95cb-8e8565a6454a",
+              "name": "descripcion",
+              "value": "={{ $('Descripcion').item.json.output[0].content[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "7d81e766-5815-4aa5-a8eb-90239f2f61d1",
+              "name": "decision",
+              "value": "={{JSON.parse($json.output[0].content[0].text).decision}}",
+              "type": "string"
+            },
+            {
+              "id": "f4f30094-7961-4dd8-ad3f-1a2e6d02b80b",
+              "name": "motivo",
+              "value": "={{JSON.parse($json.output[0].content[0].text).motivo}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2000,
+        80
+      ],
+      "id": "5d04d10c-b7f7-4725-afc4-0b8a109434ab",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -272,
+        80
+      ],
+      "id": "bab8f2a1-d77e-4979-97d7-1c5ae89bc2c3",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.rawg.io/api/games/{{$json.id}}?key=9cef0584cf4c4c728757eff061c8caa0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        624,
+        248
+      ],
+      "id": "6ad942b3-6952-42af-9ec6-f1374f7fa7bf",
+      "name": "HTTP Request Details"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        848,
+        176
+      ],
+      "id": "a1328665-7111-4567-a6f7-a15418a52d1a",
+      "name": "Merge"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing": {
+      "main": [
+        []
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Descripcion",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request Details",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Descripcion": {
+      "main": [
+        [
+          {
+            "node": "Desicion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Desicion": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request Details": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "cc05bb8b-2d18-473c-8030-148b63f1725c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b490e2106b6ecd52760567ea31c5e4a1d5e3ea27e644050684ff62b98d0580a0"
+  },
+  "id": "0tQzygQ2OQTxbfJc",
+  "tags": []
+}
